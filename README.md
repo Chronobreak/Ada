@@ -16,9 +16,9 @@ Reinventing how fashion works. Get smart recommendation from our AI, using objec
 
 ## Table of Contents
 
-1. [Setup](#setup)
-1. [Features](#features)
-1. [Technology](#technology)
+* [Setup](#setup)
+* [Features](#features)
+* [Technology](#technology)
     
 ## Setup
 ```sh
