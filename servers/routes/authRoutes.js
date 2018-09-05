@@ -22,7 +22,7 @@ passport.deserializeUser((obj, done) => {
 passport.use(new InstagramStrategy({
   clientID: INSTAGRAM_CLIENT_ID,
   clientSecret: INSTAGRAM_SECRET,
-  callbackURL: 'http://localhost:4000/auth/instagram/callback'
+  callbackURL: '/auth/instagram/callback'
   }, (accessToken, refreshToken, profile, done) => {
     process.nextTick(() => {
       console.log(accessToken)
@@ -34,7 +34,7 @@ passport.use(new InstagramStrategy({
 passport.use(new FacebookStrategy({
   clientID: FACEBOOK_APP_ID,
   clientSecret: FACEBOOK_APP_SECRET,
-  callbackURL: "http://localhost:4000/auth/facebook/callback",
+  callbackURL: "/auth/facebook/callback",
   profileFields: ['id', 'displayName', 'photos']
 },
 function(accessToken, refreshToken, profile, done) {

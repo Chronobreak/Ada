@@ -7,18 +7,18 @@ var shopper = require('./shop_config.js')
 
 var scrape = async(site,req,res)=>{
   console.log(site)
-  var gender = 0
+  var gender = 1
   let target = shopper[site]
   let { brandName, entry, searchInput, product, imgTag, imgUrlModifier, nameTag, priceTag} = target
   var colors = ['white', 'black', 'blue', 'green', 'yellow', 'red', 'orange', 'purple', 'pink', 'gray']
-  // var clothings = ['t-shirt', 'plaid-shirt', 'dress-shirt', 'polo-shirt', 'hoodie', 'sweater', 'cardigan', 'blouse', 'top', 'dress', 'jeans', 'pants', 'sweatpants', 'shorts', 'skirt', 'dress-pants', 'leggings', 'bomber-jacket','midweight-jacket', 'denim-jacket', 'leather-jacket', 'parka', 'puffer', 'vest', 'coat', 'suit-jacket', 'suit-vest']
-  var clothings = ['t-shirt', 'plaid-shirt', 'dress-shirt', 'polo-shirt', 'hoodie', 'sweater', 'cardigan', 'jeans', 'pants', 'sweatpants', 'shorts','dress-pants', 'bomber-jacket','midweight-jacket', 'denim-jacket', 'leather-jacket', 'parka', 'puffer', 'vest', 'coat', 'suit-jacket', 'suit-vest']
+  var clothings = ['t-shirt', 'plaid-shirt', 'dress-shirt', 'polo-shirt', 'hoodie', 'sweater', 'cardigan', 'blouse', 'top', 'dress', 'jeans', 'pants', 'sweatpants', 'shorts', 'skirt', 'dress-pants', 'leggings', 'bomber-jacket','midweight-jacket', 'denim-jacket', 'leather-jacket', 'parka', 'puffer', 'vest', 'coat', 'suit-jacket', 'suit-vest']
+  // var clothings = ['t-shirt', 'plaid-shirt', 'dress-shirt', 'polo-shirt', 'hoodie', 'sweater', 'cardigan', 'jeans', 'pants', 'sweatpants', 'shorts','dress-pants', 'bomber-jacket','midweight-jacket', 'denim-jacket', 'leather-jacket', 'parka', 'puffer', 'vest', 'coat', 'suit-jacket', 'suit-vest']
 
   var keywords = []
   clothings.forEach(clothing=>colors.forEach(color=> keywords.push(`${color} ${clothing}`)))
   var results = []
-  // const browser = await puppeteer.launch();
-  const browser = await puppeteer.launch({headless:false});
+  const browser = await puppeteer.launch();
+  // const browser = await puppeteer.launch({headless:false});
   const page = await browser.newPage();
 
   //bypass antiautomation test
@@ -53,7 +53,7 @@ var scrape = async(site,req,res)=>{
         console.log({keyword})
         await page.$(searchInput)
         await page.click(searchInput,{clickCount: 3})
-        await page.keyboard.type(`men ${keyword}\u000d`)
+        await page.keyboard.type(`women ${keyword}\u000d`)
         await page.waitForNavigation()
         await page.evaluate(async () => {
           await new Promise((resolve, reject) => {
@@ -68,7 +68,7 @@ var scrape = async(site,req,res)=>{
                 clearInterval(timer)
                 resolve()
               }
-            }, 20)
+            }, 30)
           })
         })
         await page.waitFor(1000)
@@ -82,7 +82,7 @@ var scrape = async(site,req,res)=>{
           var data = $(el)
           var imageUrl = data.find(imgTag).first().attr('src')
           if(imageUrl){
-            // imageUrl = imageUrl.substring(0,imageUrl.indexOf('?'))
+            imageUrl = imageUrl.substring(0,imageUrl.indexOf('?'))
             if(imageUrl[0] === '/') imageUrl = imgUrlModifier + imageUrl
           }
           var name = data.find(nameTag).text().trim().replace(/\s\s+/g, ' ')

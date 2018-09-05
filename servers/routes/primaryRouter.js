@@ -2,7 +2,6 @@
 const primaryRouter = require('express').Router();
 const axios = require('axios')
 const path = require('path');
-// const recommendationRouter = require('./routes/recommendationRoutes');
 const imageUpload = require('../imageUpload/uploadToBucket.js');
 const userDB = require('../../databases/Users.js')
 const recWorker = require('../recommendations/worker/recommendationWorker.js')
@@ -10,13 +9,11 @@ const recommendationService = require('../recommendations/service/imageTraits');
 const helpers = require('../../databases/helpers.js');
 const {getSavedEditorial, getInventoryForEditorial} = require('../../databases/models_edit.js');
 const async = require('async');
-const {getRecommendationsForImageUrl} = require('../recommendations/service/imageTraits.js')
-const { NGROKURL } = require('../../config.js')
-const labelsTable = require('../labels.js')
+const { IMAGE_RECOGNITION_URL } = require('../../config.js')
+const scraper = require('../services/scraper.js')
 
 
-// server.express.get('/scrape', scraper.googleScrape)
-// server.express.get('/tags', scraper.getByTags)
+// primaryRouter.get('/scrape', scraper.scrape.bind(this,'bloomingdales'))
 
 primaryRouter.post('/index', function(req, res) {
     let url = 'http://greenwoodhypno.co.uk/wp-content/uploads/2014/09/test-image.png'
@@ -42,48 +39,7 @@ primaryRouter.post('/favorites/:user/:inventoryId', (req,res) => {
 })
   
   // //returns user's favorites
-  
-//   primaryRouter.get('/favorites/:user', (req,res) => { 
-//       let username = req.params.user;
-  
-//       userDB.getUser(username, (err, userProfile) => {
-//       imageUpload.uploadImage(null, imageFile, (err, imageUrl) => {
-//           if (err) {
-//               res.status(500).send(err);
-//           } else {
-//               res.status(200).send(imageUrl);
-//           }
-//       })
-//   })
-//   })
-  
-// primaryRouter.post('/upload', (req,res) => {
-    
-//   let imageFile = req.files.file;
-//   console.log("Console logging imageFile from /upload: ", imageFile);
-  
-//   imageUpload.uploadImage(null, imageFile, (err, imageUrl) => {
-//       if (err) {
-//           res.status(500).send(err);
-//       } else {
-//           res.status(200).send(imageUrl);
-//       }
-//   })
-// })
-  
-  // User uploads image. Saves image, adds image to user's history
-// primaryRouter.post('/upload/:user', (req,res) => {
-//     let username = req.params.user;
-//     let imageFile = req.files.file;
-//     imageUpload.uploadImage(username, imageFile, (err, imageUrl) => {
-//         if (err) {
-//             res.status(500).send(err);
-//         } else {
-//             console.log("Console logging imageUrl: ",imageUrl);
-//             res.status(200).send(imageUrl);
-//         }
-//     })
-// })
+
   
   // //Adds inventoryId to users favorites
 primaryRouter.post('/favorites/:user/:inventoryId', (req,res) => {
@@ -141,21 +97,6 @@ primaryRouter.get('/history/:user', (req,res) => {
     });
 });
 
-//   primaryRouter.post('/recommend', function(req, res) {
-//     console.log('recommend params');
-//     if (typeof req.body.params === 'string') {
-//         console.log("Receiving URL, proceeding to get recommendations from Image URL")
-//         let imageUrl = req.body.params
-//         recommendationService.getRecommendationsForImageUrl(imageUrl, (err, recommendations) => {
-//             if (err) {
-//                 console.log("Error getting recommendations using image URL", err)
-//                 res.status(500).send();
-//             } else {
-//                 res.status(200).send(recommendations);
-//             }
-//         })
-//     } 
-//   });
 
 primaryRouter.post('/recommendinsta', (req, res) => {
 //   let aggregateLabels = []; // using this later, when aggregating labels
@@ -166,36 +107,12 @@ primaryRouter.post('/recommendinsta', (req, res) => {
               console.log("Error getting recommendations using image URL", err)
               res.status(500).send();
           } else {
-            //   aggregateLabels.push(recommendations);
-          //   console.log("Console logging recommendations length: ", recommendations.length)
-          //   // res.status(200).send(recommendations);
-          //   console.log("Console logging aggregateLabels length", aggregateLabels.length )
-          //   res.status(200).send();
-            //   console.log(aggregateLabels);
-            // console.log("Testing recommendinsta!!!: ", recommendations);
               res.send(recommendations);
           }
       })
   }
 });
   
-//   primaryRouter.post('/recommend/:user', function(req, res) {
-//       let username = req.params.user;
-//       if (typeof req.body.params === 'string') {
-//           let imageUrl = req.body.params
-//           recommendationService.getRecommendationsForImageUrl(imageUrl, (err, recommendations) => {
-//               if (err) {
-//                   console.log("Error getting recommendations using image URL", err)
-//                   res.status(500).send();
-//               } else {
-//                   if (username) {
-//                       userDB.addHistoryToUser(username, imageUrl);
-//                   }
-//                   res.status(200).send(recommendations);
-//               }
-//           })
-//       } 
-//   });
   
   // //using this endpoint starts the recommendation worker: checks inventory for new items to add to recommendation DB.
   // //TODO: Run worker occasionally instead of running this test endpoint
@@ -211,7 +128,7 @@ primaryRouter.post('/send', (req,res) => {
   let body
   if(req.files && req.files.image) body = {image: req.files.image}
   if(req.body.imageUrl) body = {imageUrl: req.body.imageUrl}
-  axios.post(NGROKURL,body)
+  axios.post(IMAGE_RECOGNITION_URL,body)
   .then(({data})=>{
     let label = Object.keys(data).reduce(function(a, b){ return data[a] > data[b] ? a : b }).split(" ").join("-")
     console.log("Console logging labels destructured from /send: ", {label})

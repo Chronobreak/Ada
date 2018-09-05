@@ -17,9 +17,9 @@ class NavBar extends React.Component {
                 borderBottomWidth: this.props.offSetY <= 44 && this.props.location.pathname === '/' ? 0 : 1,
                 transition: "background-color 200ms linear"}}>
       
-        <div className="left menu">{this.props.offSetY <= 44 && this.props.location.pathname === '/'
-        ? null
-        : <span className="item"><a style={{fontFamily: "Roboto", fontSize:24}}href="/">ADA</a></span> }
+        <div className="menu" style={{paddingLeft:'47vw'}}>{this.props.offSetY <= 44 && this.props.location.pathname === '/'
+        ? <span className="item"><a className="fadeIn" style={{fontFamily: "Roboto", fontSize:20, lineHeight:'15px', color:"white"}}href="/">Ada</a></span>
+        : <span className="item"><a className="fadeOut" style={{fontFamily: "Roboto", fontSize:20, lineHeight:'15px', color:"#333"}}href="/">Ada</a></span> }
         </div>
             {/* <div style={{fontFamily: "Roboto", fontSize: "48px", padding: "25px", display: "block", position: "absolute", color: "white"}}>ADA</div> */}
         {/* <div className="left menu">{this.props.user ? <a className="item">{this.props.user}</a> : null}</div> */}
@@ -31,8 +31,8 @@ class NavBar extends React.Component {
             <Link className={this.props.offSetY <= 44 && this.props.location.pathname === '/' ? "transparent" : "normal"} to='/style'>My Style</Link></span>
           <span className={this.props.location.pathname === '/favorites' ? "ui item active" : "item"} style={this.props.user ? {display: 'block'} : {display: 'none'}}>
             <Link className={this.props.offSetY <= 44 && this.props.location.pathname === '/' ? "transparent" : "normal"} to='/favorites'>Wish List</Link></span>
-            <span className={this.props.location.pathname === '/trending' ? "ui item active" : "item"}>
-            <Link className={this.props.offSetY <= 44 && this.props.location.pathname === '/' ? "transparent" : "normal"} to='/trending'>Trending Styles</Link></span>
+            {/* <span className={this.props.location.pathname === '/trending' ? "ui item active" : "item"}> */}
+            {/* <Link className={this.props.offSetY <= 44 && this.props.location.pathname === '/' ? "transparent" : "normal"} to='/trending'>Trending Styles</Link></span> */}
           <span className="item">
             {this.props.user 
             ? <a className={this.props.offSetY <= 44 && this.props.currentPage === '/' ? "transparent" : "normal"} href="/auth/logout">Logout</a>

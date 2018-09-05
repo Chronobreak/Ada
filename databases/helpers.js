@@ -42,18 +42,25 @@ exports.inventoryItemsWithIds = (inventoryIds, callback) => {
   })
 }
 
-exports.saveItem = (id, name, brandName, url, imageUrl, price) => {
-  new Inventory({
-    id: id,
-    name: name,
-    brandName: brandName,
-    url: url,
-    imageUrl: imageUrl,
-    price: price
-  })
+// exports.saveItem = (id, name, brandName, url, imageUrl, price) => {
+//   new Inventory({
+//     id: id,
+//     name: name,
+//     brandName: brandName,
+//     url: url,
+//     imageUrl: imageUrl,
+//     price: price
+//   })
+//     .save()
+//     .then(response => console.log("Successfully saved data"))
+//     .catch(err => console.log("Error in database save function", err));
+// };
+
+exports.saveItem = ({name, brandName, url, imageUrl, price, labels, gender}, callback) => {
+  new Inventory({name, brandName, url, imageUrl, price, labels, gender})
     .save()
-    .then(response => console.log("Successfully saved data"))
-    .catch(err => console.log("Error in database save function", err));
+    .then(response => callback(null,"Successfully saved data"))
+    .catch(err => callback(err));
 };
 
 exports.getKeywordEntries = (itemKeywords, callback) => {

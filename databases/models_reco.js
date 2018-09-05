@@ -66,7 +66,7 @@ const labelsToIndex = ()=>{
       let id = item._id
       let keyword = item.labels[1]
       ItemKeywords.findOneAndUpdate({keyword},
-        { $addToSet : {inventoryIds : id}})
+        { $addToSet : {inventoryIds : id}}).then((res)=>console.log(res))
     })
   })
 }
